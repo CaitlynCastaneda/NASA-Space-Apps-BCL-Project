@@ -1,0 +1,245 @@
+#Created by BCL NASA App Team 
+# - writer: Caitlyn Castañeda, Brianna Ramos, (debug helper: Paulina Vidriales) 
+#import beautifulsoup4 as bs4
+import requests
+from bs4 import BeautifulSoup
+from colorama import Fore
+FORES = [ Fore.BLACK, Fore.RED, Fore.GREEN, Fore.YELLOW,  Fore.BLUE, Fore.MAGENTA, Fore.CYAN, Fore.WHITE ]
+atmosdata = 'https://education.nationalgeographic.org/resource/atmosphere/'
+atmosres = requests.get(atmosdata)
+disdata = 'https://exoplanets.nasa.gov/search-for-life/habitable-zone/'
+disres = requests.get(disdata)
+gasdata = 'https://www.nasa.gov/universe/exoplanets/webb-discovers-methane-carbon-dioxide-in-atmosphere-of-k2-18-b/'
+gasres = requests.get(gasdata)
+atmosphere = "n" 
+atmosans = 0
+distance = "n" 
+distans = 0 
+gas = "n"
+gasans = 0
+check_count = 0
+surface = "n"
+surfans = 0
+eligibility_meter = 70 
+help_meter = 0 
+LINE_UP = '\033[1A' 
+LINE_CLEAR = '\033[K '
+CONSOLE_HEIGHT = 30 
+
+def clear_console(): 
+  for a in range(CONSOLE_HEIGHT): 
+    print('\033[2J', LINE_UP, end='', flush=True)
+ 
+def atmospherecheck(): #This is the function for users to input how much oxygen they want in their planet's atmosphere
+  global help_meter 
+  global eligibility_meter
+  global atmosphere
+  global atmosdata
+  global atmosres
+  global FORES
+  global atmosans
+  atmosphere = "y"
+  help = 'N' 
+  print("----------------------------")
+  print("The first step to designing a potential habitable planet is by checking its atmosphere.")
+  help = input("Do you need more information on a habitable atmosphere? [ANSWER Yes/No]")
+  if help == "Yes":
+    help_meter = help_meter + 1 
+    print("~~~~~~ \n")
+    soup = BeautifulSoup(atmosres.text, 'html.parser')
+    info = soup.get_text()  
+    print(Fore.CYAN, info[1262:-4338]) 
+    print(Fore.GREEN, "From: https://education.nationalgeographic.org/resource/atmosphere/", Fore.WHITE)
+    print("~~~~~~~")
+  global atmosphereinput 
+  atmosphereinput = input("What percent of oxygen will you add to your exoplanet's atmosphere? [INTEGER INPUT, DO NOT PUT '%', ONLY THE NUMBER.]")
+  if int(atmosphereinput) < 21 and int(atmosphereinput) < 19.5: #checks user input 
+    eligibility_meter = eligibility_meter - 10 #lowers score because answer is not suitable for life 21
+    print("Answer taken.")
+    atmosans = 1
+    clear_console() 
+    distancecheck() 
+  elif int(atmosphereinput) > 21 : #checks user input 
+    eligibility_meter = eligibility_meter - 10 
+    print("Answer taken.")
+    atmosans = 2
+    clear_console() 
+    distancecheck() 
+  elif int(atmosphereinput) == 21 or int(atmosphereinput) < 21 and int(atmosphereinput) >= 19.5:
+    print("Answer taken.")
+    atmosans = 3
+    clear_console() 
+    distancecheck() 
+
+def distancecheck(): 
+  global eligibility_meter
+  global distance
+  global distans 
+  global help_meter
+  print("----------------------------")
+  print("Distance is one of the biggest factors of whether a planet is habitable or not. It affects many factors, with a major one being availability of a water source.") 
+  help2 = input("Do you need more information on a planet's habitable zone? [ANSWER Yes/No]")
+  if help2 == "Yes":
+    help_meter = help_meter + 1 
+    print("~~~~~~ \n")
+    soup2 = BeautifulSoup(disres.text, 'html.parser')
+    info = soup2.get_text()  
+    print(Fore.CYAN, info[3234:-6159]) 
+    print(Fore.GREEN, "From: https://exoplanets.nasa.gov/search-for-life/habitable-zone/", Fore.WHITE)
+    print("~~~~~~~")
+  distanceinput = input("How far would your planet be from their sun?[ENTER DISTANCE OF PLANET TO SUN IN (n) MILLION KILOMETERS]")
+  distance = "y"
+  if int(distanceinput) > 150:
+    eligibility_meter = eligibility_meter - 10 
+    print("Answer taken.")
+    distans = 1
+    clear_console() 
+    gascheck() 
+  elif int(distanceinput) < 150:
+    eligibility_meter = eligibility_meter - 10 
+    print("Answer taken.")
+    distans = 2
+    clear_console() 
+    gascheck()
+  elif int(distanceinput) == 150:
+    print("Answer taken.")
+    distans = 3
+    clear_console() 
+    gascheck()
+
+def gascheck(): 
+  global gas 
+  global eligibility_meter
+  global gasans
+  global gasdata
+  global gasres
+  global help_meter
+  print("----------------------------")
+  print("There are more gases in the atmosphere, other than oxygen, that make Earth habitable.")
+  help3 = input("Do you need more information on a planet's habitable gasses? [ANSWER Yes/No]")
+  if help3 == "Yes":
+    help_meter = help_meter + 1 
+    print("~~~~~~ \n")
+    soup3 = BeautifulSoup(gasres.text, 'html.parser')
+    info = soup3.get_text()
+    print(Fore.CYAN, info[7731:-7144]) 
+    print(Fore.GREEN, "From: https://www.nasa.gov/universe/exoplanets/webb-discovers-methane-carbon-dioxide-in-atmosphere-of-k2-18-b/", Fore.WHITE)
+    print("~~~~~~~")
+  gasesinput = int(input("What kinds of gases do you want on your planets atmosphere?\n CHOOSE ONE FROM THIS LIST:\n 1) NITROGEN\n 2) ARGON \n 3) CARBON DIOXIDE\n 4) METHANE]\n"))
+  if gasesinput == 1:
+    eligibility_meter = eligibility_meter - 5 
+    print("Answer taken.")
+    gasans = 2
+    clear_console()
+    surfacecheck()
+  if gasesinput == 2:
+    eligibility_meter = eligibility_meter - 5 
+    print("Answer taken.")
+    gasans = 2
+    clear_console()
+    surfacecheck()
+  if gasesinput == 3:
+    print("Answer taken.")
+    gasans = 4
+    clear_console()
+    surfacecheck()
+  if gasesinput == 4:
+    print("Answer taken.")
+    gasans = 4
+    clear_console()
+    surfacecheck()
+
+def surfacecheck():
+  global surface
+  global disres 
+  global help_meter
+  global FORES
+  global Fore
+  global eligibility_meter
+  global surfans
+  print("----------------------------")
+  print("The final step to complete your potential habitable world you need to pick a type of surface. Depending on the surface you choose it affects how life will grow on your planet.")
+  help4 = input("Do you need more information on a planet's habitable surface condition? [ANSWER Yes/No]")
+  if help4 == "Yes":
+    help_meter = help_meter + 1 
+    print("~~~~~~ \n")
+    soup2 = BeautifulSoup(disres.text, 'html.parser')
+    info = soup2.get_text()  
+    print(Fore.CYAN, info[3234:-6159]) 
+    print(Fore.GREEN, "From: https://exoplanets.nasa.gov/search-for-life/habitable-zone/", Fore.WHITE)
+    print("~~~~~~~")
+  surfaceinput = int(input("What surface do you want you planet to have? [CHOOSE ONE OF THE THREE:\n 1) ICE\n 2) GAS\n 3) ROCK\n"))
+  if surfaceinput == 1:
+    eligibility_meter = eligibility_meter - 10 #Life has a hard time growing in ice, lowering the score.
+    print("Answer taken.")
+    surfans = 1
+    clear_console ()
+    score()
+  elif surfaceinput == 2:
+    eligibility_meter = eligibility_meter - 10 #Life cannot grow on gas, lowering the score.
+    print("Answer taken.")
+    surfans = 2
+    clear_console()
+    score()
+  elif surfaceinput == 3:
+    print("Answer taken.")
+    surfans = 3
+    clear_console()
+    score()
+  else:
+    clear_console() 
+    print("Not a valid option, please read the directions carefully")
+    surfacecheck() 
+
+
+def score():
+  global eligibility_meter 
+  global atmosans
+  global distans 
+  global gasans 
+  global surfans
+  print("Your habitability score is:" + str(eligibility_meter) + " out of 70")
+  #checking atmosphere answers
+  if atmosans == 1: 
+    print("Your answer for the oxygen percentage present in your atmopshere was too low. It should be fairly around 21%, with 19% still being acceptable but based off old Earth statistics.")
+  if atmosans == 2: 
+    print("Your answer for the oxygen percentage present in your atmosphere was too high. It should not be above 21% because it would affect the organisms too much for sustainable life.")
+  if atmosans == 3:
+    print("Your answer for the oxygen percentage present in your atmosphere was just right. It was historically and currently safe enough for organisms to live in.")
+  #checking distance answers
+  if distans == 1:
+    print("Your answer for how far your exoplanet would be too far for it to be properly heated for life. Heat is a major component, as it allows liquid water to be present at the surface, like Earth. Earth is 150M km away from our sun, or 3 AU (astronomial units).")
+  if distans == 2: 
+    print("Your answer for how far your exoplanet would be is too close for it to be properly heated for life. Heat is a major component, as it allows liquid water to be present and not entirely evaporated from the surface. Earth is 150M km away from our sun, or 3 AU (astronomial units)")
+  if distans == 3: 
+    print("Your answer for how far your exoplanet would be is just right for it to be properly heated for life. Heat is a major component, and like Earth, your distance from the sun is 150M km or 3 AU.")
+  #checking gas answers
+  if gasans == 4: 
+    print("Your answer for what gas would be most present was sustainable for life. While gases like argon and nitrogen are also present in Earth's atmosphere, carbon dioxide and methane are the greenhouse gases, sustaining life.")
+  if gasans == 2:
+    print("Your answer for what gas would also be present is sustainable for life, but it was not the best answer of the four. While gases like nitrogen and argon are present in the Earth's atmosphere, carbon dioxide and methane  are greenhouse gases, sustaining life the most.")
+  if surfans == 1:
+    print("Your answer for what your exoplanet's surface would be like would offer a hard time sustaining life. Ice is not a proper enviornment for important systems like plants to grow in.")
+  if surfans == 2: 
+    print("Your answer for what your exoplanet's surface would be like cannot sustain life. Gas planets do not have a clearly defined surface so there is no possibility for life to be grown on an almost nonexistent surface.")
+  if surfans == 3:
+    print("Your answer for what your exoplanet's surface would be like sustains life. Worlds with rocky terrain are able to grow plant life.")
+  print(Fore.CYAN, "Please note that, despite the score, we are still unsure of how other planets can stimulate life, their qualifications may be different from Earth's. For now, the most we can truly do is infer! Thank you for testing.")
+
+
+def menu():
+  print("Hello! Please enter the following:")
+  username = input("Name: ")
+  print("Greetings " + username + "!")
+  print("In this program, we will determine whether a planet of your making would be habitable for life.")
+  print("If you do not understand a certain term, then an explanation will be provided.")
+  input("Your exoplanet's name: ")
+  understand = input("Continue? Input 'Y' if you understand and would like to continue, and any other letter to cancel the program.")
+  if understand == "Y": 
+    clear_console() #clears screen
+    atmospherecheck() #goes to first question
+    understand = "n/a" 
+
+
+menu() #begins the code 
+
